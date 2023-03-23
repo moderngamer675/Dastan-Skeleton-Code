@@ -512,7 +512,6 @@ namespace Dastan
         }
     }
 
-
     class Square
     {
         protected string Symbol;

@@ -30,8 +30,7 @@ namespace Dastan
 
         public Dastan(int R, int C, int NoOfPieces)
         {
-            Players.Add(new Player("Player One", 1));
-            Players.Add(new Player("Player Two", -1));
+            CreateCustomPlayers();
             CreateMoveOptions();
             NoOfRows = R;
             NoOfColumns = C;
@@ -40,6 +39,32 @@ namespace Dastan
             CreateBoard();
             CreatePieces(NoOfPieces);
             CurrentPlayer = Players[0];
+        }
+
+        private void CreateCustomPlayers()
+        {
+            string p1Name = "";
+            string p2Name = "";
+
+            Console.Write("Enter Player One Name: ");
+            p1Name = Console.ReadLine();
+
+            do
+            {
+                Console.Write("Enter Player Two Name: ");
+                p2Name = Console.ReadLine();
+
+                if(p1Name == p2Name)
+                {
+                    Console.WriteLine("You cannot have the same name as player one you moron, enter a diffrent name");
+                }
+
+            }
+            while (p1Name == p2Name);
+
+
+            Players.Add(new Player(p1Name, 1));
+            Players.Add(new Player(p2Name, -1));
         }
 
         private void DisplayBoard()
@@ -356,6 +381,7 @@ namespace Dastan
             MoveOptionOffer.Add("cuirassier");
             MoveOptionOffer.Add("ryott");
             MoveOptionOffer.Add("faujdar");
+            MoveOptionOffer.Add("Faris");
         }
 
         private MoveOption CreateRyottMoveOption(int Direction)
@@ -423,18 +449,56 @@ namespace Dastan
         private MoveOption CreateChowkidarMoveOption(int Direction)
         {
             MoveOption NewMoveOption = new MoveOption("chowkidar");
+
             Move NewMove = new Move(1 * Direction, 1 * Direction);
             NewMoveOption.AddToPossibleMoves(NewMove);
+
             NewMove = new Move(1 * Direction, -1 * Direction);
             NewMoveOption.AddToPossibleMoves(NewMove);
+
             NewMove = new Move(-1 * Direction, 1 * Direction);
             NewMoveOption.AddToPossibleMoves(NewMove);
+
             NewMove = new Move(-1 * Direction, -1 * Direction);
             NewMoveOption.AddToPossibleMoves(NewMove);
+
             NewMove = new Move(0, 2 * Direction);
             NewMoveOption.AddToPossibleMoves(NewMove);
+
             NewMove = new Move(0, -2 * Direction);
             NewMoveOption.AddToPossibleMoves(NewMove);
+
+            return NewMoveOption;
+        }
+
+        private MoveOption CreateFarisMoveOption(int Direction)
+        {
+            MoveOption NewMoveOption = new MoveOption("Faris");
+
+            Move NewMove = new Move(1 * Direction, 3 * Direction);
+            NewMoveOption.AddToPossibleMoves(NewMove);
+
+            NewMove = new Move(3 * Direction, 1 * Direction);
+            NewMoveOption.AddToPossibleMoves(NewMove);
+
+            NewMove = new Move(3 * Direction, -1 * Direction);
+            NewMoveOption.AddToPossibleMoves(NewMove);
+
+            NewMove = new Move(1 * Direction, -3 * Direction);
+            NewMoveOption.AddToPossibleMoves(NewMove);
+
+            NewMove = new Move(-1 * Direction, -3 * Direction);
+            NewMoveOption.AddToPossibleMoves(NewMove);
+
+            NewMove = new Move(-1 * Direction, -1 * Direction);
+            NewMoveOption.AddToPossibleMoves(NewMove);
+
+            NewMove = new Move(-3 * Direction, 1 * Direction);
+            NewMoveOption.AddToPossibleMoves(NewMove);
+
+            NewMove = new Move(-1 * Direction, 3 * Direction);
+            NewMoveOption.AddToPossibleMoves(NewMove);
+
             return NewMoveOption;
         }
 
@@ -456,6 +520,10 @@ namespace Dastan
             {
                 return CreateJazairMoveOption(Direction);
             }
+            else if (Name == "Faris")
+            {
+                return CreateFarisMoveOption(Direction);
+            }
             else
             {
                 return CreateCuirassierMoveOption(Direction);
@@ -465,15 +533,19 @@ namespace Dastan
         private void CreateMoveOptions()
         {
             Players[0].AddToMoveOptionQueue(CreateMoveOption("ryott", 1));
+            Players[0].AddToMoveOptionQueue(CreateMoveOption("Faris", 1));
             Players[0].AddToMoveOptionQueue(CreateMoveOption("chowkidar", 1));
             Players[0].AddToMoveOptionQueue(CreateMoveOption("cuirassier", 1));
             Players[0].AddToMoveOptionQueue(CreateMoveOption("faujdar", 1));
             Players[0].AddToMoveOptionQueue(CreateMoveOption("jazair", 1));
+            
             Players[1].AddToMoveOptionQueue(CreateMoveOption("ryott", -1));
+            Players[1].AddToMoveOptionQueue(CreateMoveOption("Faris", -1));
             Players[1].AddToMoveOptionQueue(CreateMoveOption("chowkidar", -1));
             Players[1].AddToMoveOptionQueue(CreateMoveOption("jazair", -1));
             Players[1].AddToMoveOptionQueue(CreateMoveOption("faujdar", -1));
             Players[1].AddToMoveOptionQueue(CreateMoveOption("cuirassier", -1));
+            
         }
     }
 

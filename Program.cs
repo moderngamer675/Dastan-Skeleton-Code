@@ -27,6 +27,7 @@ namespace Dastan
         protected List<string> MoveOptionOffer = new List<string>();
         protected Player CurrentPlayer;
         protected Random RGen = new Random();
+        private bool WafrAwarded = false;
 
         public Dastan(int R, int C, int NoOfPieces)
         {
@@ -253,6 +254,32 @@ namespace Dastan
             return 0;
         }
 
+        private bool AwardWafr()
+        {
+            double chance = RGen.NextDouble();
+
+            if(chance <= 0.25)
+            {
+                WafrAwarded = true;
+            }
+            else
+            {
+                WafrAwarded = false;
+            }
+
+            return WafrAwarded;
+        }
+
+        private bool GetWafrAwarded()
+        {
+            get { return WafrAwarded; }
+        }
+
+        private bool SetWafrAwarded()
+        {
+            set { WafrAwarded = false; }
+        }
+
         public void PlayGame()
         {
             bool GameOver = false;
@@ -382,6 +409,7 @@ namespace Dastan
             MoveOptionOffer.Add("ryott");
             MoveOptionOffer.Add("faujdar");
             MoveOptionOffer.Add("Faris");
+            MoveOptionOffer.Add("Sarukh");
         }
 
         private MoveOption CreateRyottMoveOption(int Direction)
@@ -475,28 +503,50 @@ namespace Dastan
         {
             MoveOption NewMoveOption = new MoveOption("Faris");
 
-            Move NewMove = new Move(1 * Direction, 3 * Direction);
+            Move NewMove = new Move(1 * Direction, 2 * Direction);
             NewMoveOption.AddToPossibleMoves(NewMove);
 
-            NewMove = new Move(3 * Direction, 1 * Direction);
+            NewMove = new Move(2 * Direction, 1 * Direction);
             NewMoveOption.AddToPossibleMoves(NewMove);
 
-            NewMove = new Move(3 * Direction, -1 * Direction);
+            NewMove = new Move(2 * Direction, -1 * Direction);
             NewMoveOption.AddToPossibleMoves(NewMove);
 
-            NewMove = new Move(1 * Direction, -3 * Direction);
+            NewMove = new Move(1 * Direction, -2 * Direction);
             NewMoveOption.AddToPossibleMoves(NewMove);
 
-            NewMove = new Move(-1 * Direction, -3 * Direction);
+            NewMove = new Move(-1 * Direction, -2 * Direction);
             NewMoveOption.AddToPossibleMoves(NewMove);
 
             NewMove = new Move(-1 * Direction, -1 * Direction);
             NewMoveOption.AddToPossibleMoves(NewMove);
 
-            NewMove = new Move(-3 * Direction, 1 * Direction);
+            NewMove = new Move(-2 * Direction, 1 * Direction);
             NewMoveOption.AddToPossibleMoves(NewMove);
 
-            NewMove = new Move(-1 * Direction, 3 * Direction);
+            NewMove = new Move(-1 * Direction, 2 * Direction);
+            NewMoveOption.AddToPossibleMoves(NewMove);
+
+            return NewMoveOption;
+        }
+
+        private MoveOption CreateSarukhMoveOption(int Direction)
+        {
+            MoveOption NewMoveOption = new MoveOption("Sarukh");
+
+            Move NewMove = new Move(2 * Direction, 0 * Direction);
+            NewMoveOption.AddToPossibleMoves(NewMove);
+
+            NewMove = new Move(1 * Direction, 1 * Direction);
+            NewMoveOption.AddToPossibleMoves(NewMove);
+
+            NewMove = new Move(1 * Direction, 0 * Direction);
+            NewMoveOption.AddToPossibleMoves(NewMove);
+
+            NewMove = new Move(-1 * Direction, 0 * Direction);
+            NewMoveOption.AddToPossibleMoves(NewMove);
+
+            NewMove = new Move(-1 * Direction, 1 * Direction);
             NewMoveOption.AddToPossibleMoves(NewMove);
 
             return NewMoveOption;
@@ -524,6 +574,10 @@ namespace Dastan
             {
                 return CreateFarisMoveOption(Direction);
             }
+            else if (Name == "Sarukh")
+            {
+                return CreateSarukhMoveOption(Direction);
+            }
             else
             {
                 return CreateCuirassierMoveOption(Direction);
@@ -533,13 +587,16 @@ namespace Dastan
         private void CreateMoveOptions()
         {
             Players[0].AddToMoveOptionQueue(CreateMoveOption("ryott", 1));
+            Players[0].AddToMoveOptionQueue(CreateMoveOption("Sarukh", 1));
             Players[0].AddToMoveOptionQueue(CreateMoveOption("Faris", 1));
             Players[0].AddToMoveOptionQueue(CreateMoveOption("chowkidar", 1));
             Players[0].AddToMoveOptionQueue(CreateMoveOption("cuirassier", 1));
             Players[0].AddToMoveOptionQueue(CreateMoveOption("faujdar", 1));
             Players[0].AddToMoveOptionQueue(CreateMoveOption("jazair", 1));
+
             
             Players[1].AddToMoveOptionQueue(CreateMoveOption("ryott", -1));
+            Players[1].AddToMoveOptionQueue(CreateMoveOption("Sarukh", -1));
             Players[1].AddToMoveOptionQueue(CreateMoveOption("Faris", -1));
             Players[1].AddToMoveOptionQueue(CreateMoveOption("chowkidar", -1));
             Players[1].AddToMoveOptionQueue(CreateMoveOption("jazair", -1));

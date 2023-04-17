@@ -272,6 +272,7 @@ namespace Dastan
                         DisplayState();
                     }
                     else if(Choice == 8)
+
                     {
                         Console.WriteLine("Selecting this option costs 5 score points.");
                         Player Opponent;

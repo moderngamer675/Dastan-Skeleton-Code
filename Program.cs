@@ -27,7 +27,6 @@ namespace Dastan
         protected List<string> MoveOptionOffer = new List<string>();
         protected Player CurrentPlayer;
         protected Random RGen = new Random();
-        private bool WafrAwarded = false;
 
         public Dastan(int R, int C, int NoOfPieces)
         {
@@ -55,7 +54,7 @@ namespace Dastan
                 Console.Write("Enter Player Two Name: ");
                 p2Name = Console.ReadLine();
 
-                if(p1Name == p2Name)
+                if (p1Name == p2Name)
                 {
                     Console.WriteLine("You cannot have the same name as player one you moron, enter a diffrent name");
                 }
@@ -254,30 +253,16 @@ namespace Dastan
             return 0;
         }
 
-        private bool AwardWafr()
+        private bool AwardWafr() 
         {
-            double chance = RGen.NextDouble();
-
-            if(chance <= 0.25)
+            if (RGen.Next(0, 4) == 0)
             {
-                WafrAwarded = true;
+                return true;
             }
             else
             {
-                WafrAwarded = false;
+                return false;
             }
-
-            return WafrAwarded;
-        }
-
-        private bool GetWafrAwarded()
-        {
-            get { return WafrAwarded; }
-        }
-
-        private bool SetWafrAwarded()
-        {
-            set { WafrAwarded = false; }
         }
 
         public void PlayGame()
@@ -287,18 +272,40 @@ namespace Dastan
             {
                 DisplayState();
                 bool SquareIsValid = false;
-                int Choice;
-                do
+                //CHANGE
+                int Choice = 0;     //Q4
+                bool Wafr = false;
+                if (AwardWafr() && !CurrentPlayer.GetWafrAwarded())
                 {
-                    Console.Write("Choose move option to use from queue (1 to 3) or 9 to take the offer: ");
-                    Choice = Convert.ToInt32(Console.ReadLine());
-                    if (Choice == 9)
-                    {
-                        UseMoveOptionOffer();
-                        DisplayState();
-                    }
+                    Console.WriteLine("You have been offered a Wafr!");
+                    Console.WriteLine("You can select any move from your queue for free this turn.");
+                    Wafr = true;
+                    CurrentPlayer.SetWafrAwarded();
                 }
-                while (Choice < 1 || Choice > 3);
+                if (Wafr)
+                {
+                    do
+                    {
+                        Console.Write("Choose move option to use from queue (1 to 5): ");
+                        Choice = Convert.ToInt32(Console.ReadLine());
+                    }
+                    while (Choice < 1 || Choice > 5);
+                }
+                else
+                {
+                    do
+                    {
+                        Console.Write("Choose move option to use from queue (1 to 3) or 9 to take the offer: ");
+                        Choice = Convert.ToInt32(Console.ReadLine());
+                        if (Choice == 9)
+                        {
+                            UseMoveOptionOffer();
+                            DisplayState();
+                        }
+                    }
+                    while (Choice < 1 || Choice > 3);
+                }
+                //END CHANGE
                 int StartSquareReference = 0;
                 while (!SquareIsValid)
                 {
@@ -316,24 +323,18 @@ namespace Dastan
                 if (MoveLegal)
                 {
                     int PointsForPieceCapture = CalculatePieceCapturePoints(FinishSquareReference);
-                    CurrentPlayer.ChangeScore(-(Choice + (2 * (Choice - 1))));
-                    CurrentPlayer.UpdateQueueAfterMove(Choice);
-                    UpdateBoard(StartSquareReference, FinishSquareReference);
-                    UpdatePlayerScore(PointsForPieceCapture);
-                    Console.WriteLine("New score: " + CurrentPlayer.GetScore() + Environment.NewLine);
+                    //CHANGE
+                    if (!Wafr)   //Q4
+                    {
+                        CurrentPlayer.ChangeScore(-(Choice + (2 * (Choice - 1))));
+                    }
+                    else
+                    {
+                        Console.WriteLine();
+                        Console.WriteLine("Using Wafr move at zero cost");
+                    }
                 }
-                if (CurrentPlayer.SameAs(Players[0]))
-                {
-                    CurrentPlayer = Players[1];
-                }
-                else
-                {
-                    CurrentPlayer = Players[0];
-                }
-                GameOver = CheckIfGameOver();
             }
-            DisplayState();
-            DisplayFinalResult();
         }
 
         private void UpdateBoard(int StartSquareReference, int FinishSquareReference)
@@ -594,7 +595,7 @@ namespace Dastan
             Players[0].AddToMoveOptionQueue(CreateMoveOption("faujdar", 1));
             Players[0].AddToMoveOptionQueue(CreateMoveOption("jazair", 1));
 
-            
+
             Players[1].AddToMoveOptionQueue(CreateMoveOption("ryott", -1));
             Players[1].AddToMoveOptionQueue(CreateMoveOption("Sarukh", -1));
             Players[1].AddToMoveOptionQueue(CreateMoveOption("Faris", -1));
@@ -602,7 +603,7 @@ namespace Dastan
             Players[1].AddToMoveOptionQueue(CreateMoveOption("jazair", -1));
             Players[1].AddToMoveOptionQueue(CreateMoveOption("faujdar", -1));
             Players[1].AddToMoveOptionQueue(CreateMoveOption("cuirassier", -1));
-            
+
         }
     }
 
@@ -639,6 +640,7 @@ namespace Dastan
         {
             return PointsIfCaptured;
         }
+
     }
 
     class Square
@@ -842,6 +844,8 @@ namespace Dastan
         private int Direction, Score;
         private MoveOptionQueue Queue = new MoveOptionQueue();
 
+        private bool WafrAwarded = false;
+
         public Player(string N, int D)
         {
             Score = 100;
@@ -909,6 +913,16 @@ namespace Dastan
         {
             MoveOption Temp = Queue.GetMoveOptionInPosition(Pos - 1);
             return Temp.CheckIfThereIsAMoveToSquare(StartSquareReference, FinishSquareReference);
+        }
+
+        public bool GetWafrAwarded()
+        {
+            return WafrAwarded;
+        }
+
+        public void SetWafrAwarded()
+        {
+            WafrAwarded = true;
         }
     }
 }

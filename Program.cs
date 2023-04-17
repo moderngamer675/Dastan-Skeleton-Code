@@ -4,6 +4,7 @@
 //developed in the Visual Studio Community Edition programming environment
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace Dastan
@@ -263,12 +264,30 @@ namespace Dastan
                 int Choice;
                 do
                 {
-                    Console.Write("Choose move option to use from queue (1 to 3) or 9 to take the offer: ");
+                    Console.Write("Choose move option to use from queue (1 to 3) or 8 to view your opponents queue or 9 to take the offer: ");
                     Choice = Convert.ToInt32(Console.ReadLine());
                     if (Choice == 9)
                     {
                         UseMoveOptionOffer();
                         DisplayState();
+                    }
+                    else if(Choice == 8)
+                    {
+                        Console.WriteLine("Selecting this option costs 5 score points.");
+                        Player Opponent;
+                        if (CurrentPlayer.SameAs(Players[0]))
+                        {
+                            Opponent = Players[1];
+                        }
+                        else
+                        {
+                            Opponent = Players[0];
+                        }
+                        Console.WriteLine(Opponent.GetName() + "'s queue is: ");
+                        Console.WriteLine(Opponent.GetJustQueueAsString());
+                        CurrentPlayer.ChangeScore(-5);
+                        DisplayState();
+
                     }
                 }
                 while (Choice < 1 || Choice > 3);
@@ -821,6 +840,11 @@ namespace Dastan
             Score = 100;
             Name = N;
             Direction = D;
+        }
+
+        public string GetJustQueueAsString()
+        {
+            return Queue.GetQueueAsString();
         }
 
         public bool SameAs(Player APlayer)

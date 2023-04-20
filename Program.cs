@@ -264,17 +264,12 @@ namespace Dastan
                 int Choice;
                 do
                 {
-                    Console.Write("Choose move option to use from queue (1 to 3) or 8 to view your opponents queue or 9 to take the offer: ");
+                    //CHANGE
+                    Console.Write("Choose move option to use from queue (1 to 3) or 9 to take the offer or 8 to spy on your opponent's queue: ");  //Q5
                     Choice = Convert.ToInt32(Console.ReadLine());
-                    if (Choice == 9)
+                    if (Choice == 8)
                     {
-                        UseMoveOptionOffer();
-                        DisplayState();
-                    }
-                    else if(Choice == 8)
-
-                    {
-                        Console.WriteLine("Selecting this option costs 5 score points.");
+                        Console.WriteLine("Selecting this option costs 5 score points." + Environment.NewLine);
                         Player Opponent;
                         if (CurrentPlayer.SameAs(Players[0]))
                         {
@@ -285,12 +280,18 @@ namespace Dastan
                             Opponent = Players[0];
                         }
                         Console.WriteLine(Opponent.GetName() + "'s queue is: ");
-                        Console.WriteLine(Opponent.GetJustQueueAsString());
+                        Console.WriteLine(Opponent.GetJustQueueAsString() + Environment.NewLine);
                         CurrentPlayer.ChangeScore(-5);
                         DisplayState();
-
                     }
+                    else if (Choice == 9)
+                    {
+                        UseMoveOptionOffer();
+                        DisplayState();
+                    }
+                    //END CHANGE
                 }
+
                 while (Choice < 1 || Choice > 3);
                 int StartSquareReference = 0;
                 while (!SquareIsValid)
